@@ -1,0 +1,6 @@
+{
+  "name": "Botões de Cópia Rápida",
+  "description": "Crie, edite e gerencie botões clicáveis para copiar textos de forma rápida e prática.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
