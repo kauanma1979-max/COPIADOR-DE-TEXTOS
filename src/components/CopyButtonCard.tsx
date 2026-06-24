@@ -130,7 +130,7 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
   };
 
   const handleCancel = () => {
-    if (onCancelNew) {
+    if (!button.name && !button.text && onCancelNew) {
       onCancelNew();
     } else {
       setName(button.name);
@@ -159,7 +159,7 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-sm font-bold text-black dark:text-white font-sans flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
-                {onCancelNew ? 'Criar Novo Botão' : 'Editar Botão'}
+                {!button.name && !button.text ? 'Criar Novo Botão' : 'Editar Botão'}
               </h3>
               <button
                 onClick={handleCancel}
@@ -206,6 +206,38 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
                 />
               </div>
 
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">
+                  Cor do Botão
+                </label>
+                <div className="flex flex-wrap gap-2.5">
+                  {Object.entries(COLOR_SCHEMES).map(([key, value]) => {
+                    let dotBg = '';
+                    if (key === 'emerald') dotBg = 'bg-emerald-500';
+                    else if (key === 'blue') dotBg = 'bg-blue-500';
+                    else if (key === 'purple') dotBg = 'bg-purple-500';
+                    else if (key === 'amber') dotBg = 'bg-amber-500';
+                    else if (key === 'rose') dotBg = 'bg-rose-500';
+                    else dotBg = 'bg-slate-500';
+
+                    const isSelected = color === key;
+                    return (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setColor(key as any)}
+                        className={`w-6 h-6 rounded-full ${dotBg} transition-all cursor-pointer relative flex items-center justify-center ${
+                          isSelected ? 'ring-2 ring-offset-2 ring-blue-500 dark:ring-offset-slate-900 scale-110' : 'opacity-70 hover:opacity-100 hover:scale-105'
+                        }`}
+                        title={key}
+                      >
+                        {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               {error && (
                 <div className="text-xs text-rose-500 bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-2.5 rounded-xl flex items-start gap-1.5">
                   <span className="font-semibold">⚠️</span>
@@ -242,25 +274,25 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             onClick={handleCopy}
-            className="group relative w-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[140px] select-none text-black dark:text-white"
+            className={`group relative w-full border ${currentScheme.border} ${currentScheme.bg} rounded-2xl p-5 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[140px] select-none ${currentScheme.text} ${currentScheme.glow}`}
             id={`copy-card-${button.id}`}
           >
             <div>
               {/* Header inside the clickable card */}
               <div className="flex justify-between items-start gap-2 mb-2">
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-sans font-bold text-black dark:text-white text-base leading-tight tracking-tight truncate">
+                  <h3 className="font-sans font-bold text-slate-900 dark:text-slate-50 text-base leading-tight tracking-tight truncate">
                     {button.name}
                   </h3>
                 </div>
 
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+                <div className="flex items-center gap-1.5 transition-opacity duration-200">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsEditing(true);
                     }}
-                    className="action-button p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                    className="action-button p-1.5 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 hover:bg-white/60 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer border border-slate-200/40 dark:border-slate-800"
                     title="Editar Texto"
                     id={`edit-icon-${button.id}`}
                   >
@@ -273,7 +305,7 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
                         onDelete(button.id);
                       }
                     }}
-                    className="action-button p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
+                    className="action-button p-1.5 text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 hover:bg-white/60 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer border border-slate-200/40 dark:border-slate-800"
                     title="Excluir Botão"
                     id={`delete-icon-${button.id}`}
                   >
@@ -283,18 +315,18 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
               </div>
 
               {/* Text content preview */}
-              <div className="relative mt-2 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-900 rounded-xl px-3 py-2.5 min-h-[52px] flex items-center justify-between group-hover:bg-slate-100/50 dark:group-hover:bg-slate-900 transition-all">
+              <div className="relative mt-2 bg-white/50 dark:bg-slate-950/50 border border-slate-100/60 dark:border-slate-900 rounded-xl px-3 py-2.5 min-h-[52px] flex items-center justify-between transition-all">
                 <p className="text-xs text-slate-700 dark:text-slate-300 font-sans font-normal break-all line-clamp-2 leading-relaxed select-text" onClick={(e) => e.stopPropagation()}>
                   {button.text}
                 </p>
                 <div className="flex-shrink-0 ml-2 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
-                  <FileText className="w-4 h-4 opacity-40 group-hover:opacity-80 transition-opacity" />
+                  <FileText className="w-4 h-4 opacity-45 group-hover:opacity-85 transition-opacity" />
                 </div>
               </div>
             </div>
 
             {/* Click to copy hint footer */}
-            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-end text-xs font-semibold">
+            <div className="mt-4 pt-3 border-t border-slate-150 dark:border-slate-800/80 flex items-center justify-end text-xs font-semibold">
               <div className={`flex items-center gap-1.5 transition-colors duration-200 ${copied ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400'}`}>
                 {copied ? (
                   <>
