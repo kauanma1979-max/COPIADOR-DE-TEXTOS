@@ -153,12 +153,12 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200"
+            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-xs hover:shadow-md transition-shadow duration-200"
             id={`edit-card-${button.id}`}
           >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 font-display flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-pulse"></span>
+              <h3 className="text-sm font-bold text-black dark:text-white font-sans flex items-center gap-2">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-pulse"></span>
                 {onCancelNew ? 'Criar Novo Botão' : 'Editar Botão'}
               </h3>
               <button
@@ -173,7 +173,7 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
                   Nome do Botão <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -184,14 +184,14 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
                     if (error) setError('');
                   }}
                   placeholder="Ex: Minha Chave Pix, Link do Zoom, Saudação"
-                  className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all dark:text-slate-100"
+                  className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all dark:text-slate-100 font-sans"
                   maxLength={50}
                   id={`input-name-${button.id}`}
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">
                   Texto para Copiar <span className="text-rose-500">*</span>
                 </label>
                 <textarea
@@ -201,59 +201,9 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
                     if (error) setError('');
                   }}
                   placeholder="Digite ou cole aqui o conteúdo que será copiado ao clicar..."
-                  className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-[90px] max-h-[200px] resize-y dark:text-slate-100 font-mono text-xs"
+                  className="w-full px-3 py-2 text-sm bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-[90px] max-h-[200px] resize-y dark:text-slate-100 font-sans text-xs"
                   id={`textarea-text-${button.id}`}
                 />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">
-                  Cor de Destaque
-                </label>
-                <div className="flex gap-2 flex-wrap">
-                  {(Object.keys(COLOR_SCHEMES) as Array<keyof typeof COLOR_SCHEMES>).map((col) => {
-                    const active = col === color;
-                    const scheme = COLOR_SCHEMES[col];
-                    const activeBorder = {
-                      emerald: 'ring-emerald-500 bg-emerald-500',
-                      blue: 'ring-blue-500 bg-blue-500',
-                      purple: 'ring-purple-500 bg-purple-500',
-                      amber: 'ring-amber-500 bg-amber-500',
-                      rose: 'ring-rose-500 bg-rose-500',
-                      slate: 'ring-slate-500 bg-slate-500',
-                    }[col];
-
-                    return (
-                      <button
-                        key={col}
-                        type="button"
-                        onClick={() => setColor(col)}
-                        className={`w-7 h-7 rounded-full cursor-pointer relative flex items-center justify-center transition-transform hover:scale-110 active:scale-95 ${
-                          col === 'emerald' ? 'bg-emerald-100 border border-emerald-300 dark:bg-emerald-950' :
-                          col === 'blue' ? 'bg-blue-100 border border-blue-300 dark:bg-blue-950' :
-                          col === 'purple' ? 'bg-purple-100 border border-purple-300 dark:bg-purple-950' :
-                          col === 'amber' ? 'bg-amber-100 border border-amber-300 dark:bg-amber-950' :
-                          col === 'rose' ? 'bg-rose-100 border border-rose-300 dark:bg-rose-950' :
-                          'bg-slate-100 border border-slate-300 dark:bg-slate-800'
-                        }`}
-                        title={col}
-                        id={`color-btn-${button.id}-${col}`}
-                      >
-                        <span className={`w-3.5 h-3.5 rounded-full ${
-                          col === 'emerald' ? 'bg-emerald-500' :
-                          col === 'blue' ? 'bg-blue-500' :
-                          col === 'purple' ? 'bg-purple-500' :
-                          col === 'amber' ? 'bg-amber-500' :
-                          col === 'rose' ? 'bg-rose-500' :
-                          'bg-slate-600 dark:bg-slate-400'
-                        }`} />
-                        {active && (
-                          <span className="absolute inset-0 rounded-full ring-2 ring-offset-2 dark:ring-offset-slate-900 ring-slate-400" />
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
               </div>
 
               {error && (
@@ -267,7 +217,7 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
                 <button
                   type="button"
                   onClick={handleSave}
-                  className="flex-1 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm shadow-blue-100 dark:shadow-none"
+                  className="flex-1 py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
                   id={`save-btn-${button.id}`}
                 >
                   <Save className="w-3.5 h-3.5" />
@@ -292,17 +242,14 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             onClick={handleCopy}
-            className={`group relative w-full border ${currentScheme.border} ${currentScheme.bg} rounded-2xl p-5 shadow-xs hover:shadow-md transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[140px] select-none`}
+            className="group relative w-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl p-5 shadow-xs hover:shadow-md hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[140px] select-none text-black dark:text-white"
             id={`copy-card-${button.id}`}
           >
-            {/* Ambient inner background decorative elements for high fidelity */}
-            <div className="absolute top-0 right-0 w-24 h-24 bg-linear-to-bl from-white/10 to-transparent pointer-events-none rounded-bl-full" />
-            
             <div>
               {/* Header inside the clickable card */}
               <div className="flex justify-between items-start gap-2 mb-2">
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-display font-bold text-slate-800 dark:text-slate-100 text-base leading-tight tracking-tight group-hover:text-slate-900 dark:group-hover:text-white transition-colors truncate">
+                  <h3 className="font-sans font-bold text-black dark:text-white text-base leading-tight tracking-tight truncate">
                     {button.name}
                   </h3>
                 </div>
@@ -313,7 +260,7 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
                       e.stopPropagation();
                       setIsEditing(true);
                     }}
-                    className="action-button p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
+                    className="action-button p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                     title="Editar Texto"
                     id={`edit-icon-${button.id}`}
                   >
@@ -326,7 +273,7 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
                         onDelete(button.id);
                       }
                     }}
-                    className="action-button p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-white/60 dark:hover:bg-slate-800/80 rounded-lg transition-colors cursor-pointer"
+                    className="action-button p-1.5 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors cursor-pointer"
                     title="Excluir Botão"
                     id={`delete-icon-${button.id}`}
                   >
@@ -336,8 +283,8 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
               </div>
 
               {/* Text content preview */}
-              <div className="relative mt-2 bg-white/40 dark:bg-slate-900/40 border border-black/5 dark:border-white/5 rounded-xl px-3 py-2.5 min-h-[52px] flex items-center justify-between group-hover:bg-white/70 dark:group-hover:bg-slate-900/60 transition-all">
-                <p className="text-xs text-slate-600 dark:text-slate-400 font-mono break-all line-clamp-2 leading-relaxed select-text" onClick={(e) => e.stopPropagation()}>
+              <div className="relative mt-2 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-900 rounded-xl px-3 py-2.5 min-h-[52px] flex items-center justify-between group-hover:bg-slate-100/50 dark:group-hover:bg-slate-900 transition-all">
+                <p className="text-xs text-slate-700 dark:text-slate-300 font-sans font-normal break-all line-clamp-2 leading-relaxed select-text" onClick={(e) => e.stopPropagation()}>
                   {button.text}
                 </p>
                 <div className="flex-shrink-0 ml-2 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors">
@@ -347,11 +294,7 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
             </div>
 
             {/* Click to copy hint footer */}
-            <div className="mt-4 pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-xs font-semibold">
-              <span className={`px-2 py-0.5 rounded-full border text-[10px] uppercase tracking-wider ${currentScheme.badge}`}>
-                {button.color === 'slate' ? 'padrão' : button.color}
-              </span>
-
+            <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-end text-xs font-semibold">
               <div className={`flex items-center gap-1.5 transition-colors duration-200 ${copied ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400'}`}>
                 {copied ? (
                   <>

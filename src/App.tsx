@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Plus, 
@@ -53,11 +53,7 @@ const INITIAL_TEMPLATES: CopyButtonType[] = [
 export default function App() {
   const [buttons, setButtons] = useState<CopyButtonType[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedColorFilter, setSelectedColorFilter] = useState<string>('all');
   const [sessionCopyCount, setSessionCopyCount] = useState(0);
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [importText, setImportText] = useState('');
-  const [importError, setImportError] = useState('');
   const [toastMessage, setToastMessage] = useState('');
 
   // Local storage loading
@@ -66,7 +62,7 @@ export default function App() {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) {
+        if (Array.isArray(parsed) && parsed.length > 0) {
           const sanitized = parsed.map((btn: any) => ({
             id: btn.id || `btn-${Math.random().toString(36).substring(2, 9)}`,
             name: typeof btn.name === 'string' ? btn.name : '',
@@ -171,43 +167,59 @@ export default function App() {
     showToast('JSON exportado com sucesso!');
   };
 
-  const handleImportJSON = () => {
-    try {
-      const parsed = JSON.parse(importText);
-      if (!Array.isArray(parsed)) {
-        throw new Error('O conteúdo deve ser uma lista válida de botões.');
-      }
-      
-      // Validate structure
-      const validated: CopyButtonType[] = parsed.map((item: any, idx: number) => {
-        if (!item.id || !item.name || !item.text) {
-          throw new Error(`Item na posição ${idx + 1} está com estrutura inválida (precisa de id, name e text).`);
+  const handleFileImport = (file: File) => {
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const text = e.target?.result;
+        if (typeof text !== 'string') {
+          throw new Error('Não foi possível ler o arquivo.');
         }
-        return {
-          id: item.id,
-          name: item.name,
-          text: item.text,
-          color: ['emerald', 'blue', 'purple', 'amber', 'rose', 'slate'].includes(item.color) ? item.color : 'slate',
-          createdAt: Number(item.createdAt) || Date.now(),
-        };
-      });
 
-      // Merge or overwrite
-      if (window.confirm(`Deseja mesclar estes ${validated.length} botões com seus botões atuais?`)) {
-        const uniqueMap = new Map();
-        buttons.forEach((b) => uniqueMap.set(b.id, b));
-        validated.forEach((b) => uniqueMap.set(b.id, b));
-        saveButtons(Array.from(uniqueMap.values()));
-      } else {
-        saveButtons(validated);
+        const parsed = JSON.parse(text);
+        if (!Array.isArray(parsed)) {
+          throw new Error('O conteúdo deve ser uma lista válida de botões.');
+        }
+        
+        // Validate structure
+        const validated: CopyButtonType[] = parsed.map((item: any, idx: number) => {
+          if (!item.id || !item.name || !item.text) {
+            throw new Error(`Item na posição ${idx + 1} está com estrutura inválida (precisa de id, name e text).`);
+          }
+          return {
+            id: item.id,
+            name: item.name,
+            text: item.text,
+            color: ['emerald', 'blue', 'purple', 'amber', 'rose', 'slate'].includes(item.color) ? item.color : 'slate',
+            createdAt: Number(item.createdAt) || Date.now(),
+          };
+        });
+
+        // Merge or overwrite
+        if (window.confirm(`Deseja mesclar estes ${validated.length} botões com seus botões atuais?`)) {
+          const uniqueMap = new Map();
+          buttons.forEach((b) => uniqueMap.set(b.id, b));
+          validated.forEach((b) => uniqueMap.set(b.id, b));
+          saveButtons(Array.from(uniqueMap.values()));
+        } else {
+          saveButtons(validated);
+        }
+
+        showToast('Botões importados com sucesso!');
+      } catch (err: any) {
+        const errorMsg = err.message || 'Erro ao processar o arquivo JSON. Verifique a formatação.';
+        showToast(errorMsg);
+        alert(errorMsg);
       }
+    };
+    reader.readAsText(file);
+  };
 
-      setShowImportModal(false);
-      setImportText('');
-      setImportError('');
-      showToast('Botões importados com sucesso!');
-    } catch (err: any) {
-      setImportError(err.message || 'Erro ao processar o arquivo JSON. Verifique a formatação.');
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleFileImport(e.target.files[0]);
     }
   };
 
@@ -223,15 +235,12 @@ export default function App() {
     return buttons.filter((btn) => {
       const btnName = btn.name || '';
       const btnText = btn.text || '';
-      const matchesSearch = 
+      return (
         btnName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        btnText.toLowerCase().includes(searchTerm.toLowerCase());
-      
-      const matchesColor = selectedColorFilter === 'all' || btn.color === selectedColorFilter;
-
-      return matchesSearch && matchesColor;
+        btnText.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     });
-  }, [buttons, searchTerm, selectedColorFilter]);
+  }, [buttons, searchTerm]);
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 flex flex-col font-sans">
@@ -269,26 +278,6 @@ export default function App() {
               </p>
             </div>
           </div>
-
-          {/* Quick Session Stats and actions */}
-          <div className="flex items-center gap-2 self-end sm:self-auto">
-            {sessionCopyCount > 0 && (
-              <div className="bg-orange-50 border border-orange-100 px-3 py-1.5 rounded-xl flex items-center gap-1.5 text-xs font-bold text-orange-700 animate-pulse">
-                <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
-                <span>{sessionCopyCount} {sessionCopyCount === 1 ? 'cópia realizada' : 'cópias realizadas'}</span>
-              </div>
-            )}
-            
-            <button
-              onClick={handleResetToTemplates}
-              className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all cursor-pointer text-xs flex items-center gap-1 font-semibold border border-slate-200"
-              title="Restaurar botões padrão"
-              id="restore-templates-btn"
-            >
-              <RotateCcw className="w-4 h-4" />
-              <span className="hidden md:inline">Modelos</span>
-            </button>
-          </div>
         </div>
       </header>
 
@@ -296,10 +285,10 @@ export default function App() {
       <section className="bg-white border-b border-slate-150 py-3.5 shadow-2xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-3.5">
           
-          {/* Search bar & Color filter */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1 max-w-3xl">
+          {/* Search bar */}
+          <div className="flex-1 max-w-2xl">
             {/* Search Input */}
-            <div className="relative flex-1">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
               <input
                 type="text"
@@ -318,64 +307,13 @@ export default function App() {
                 </button>
               )}
             </div>
-
-            {/* Color Pill Filters */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-              <span className="text-xs text-slate-400 font-medium flex items-center gap-1 mr-1 flex-shrink-0">
-                <Filter className="w-3 h-3" />
-                Filtrar:
-              </span>
-              <button
-                onClick={() => setSelectedColorFilter('all')}
-                className={`px-2.5 py-1 text-xs rounded-lg font-semibold border cursor-pointer transition-colors ${
-                  selectedColorFilter === 'all'
-                    ? 'bg-slate-900 border-slate-900 text-white'
-                    : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                }`}
-                id="filter-all"
-              >
-                Todos
-              </button>
-              {['emerald', 'blue', 'purple', 'amber', 'rose', 'slate'].map((c) => {
-                const colorLabel = {
-                  emerald: 'Verde',
-                  blue: 'Azul',
-                  purple: 'Roxo',
-                  amber: 'Laranja',
-                  rose: 'Rosa',
-                  slate: 'Cinza'
-                }[c];
-                return (
-                  <button
-                    key={c}
-                    onClick={() => setSelectedColorFilter(c)}
-                    className={`px-2.5 py-1 text-xs rounded-lg font-semibold border cursor-pointer transition-colors flex items-center gap-1.5 ${
-                      selectedColorFilter === c
-                        ? 'bg-slate-900 border-slate-900 text-white'
-                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
-                    }`}
-                    id={`filter-${c}`}
-                  >
-                    <span className={`w-2 h-2 rounded-full ${
-                      c === 'emerald' ? 'bg-emerald-500' :
-                      c === 'blue' ? 'bg-blue-500' :
-                      c === 'purple' ? 'bg-purple-500' :
-                      c === 'amber' ? 'bg-amber-500' :
-                      c === 'rose' ? 'bg-rose-500' :
-                      'bg-slate-500'
-                    }`} />
-                    <span className="hidden sm:inline">{colorLabel}</span>
-                  </button>
-                );
-              })}
-            </div>
           </div>
 
           {/* Action buttons (Add, backup, restore) */}
           <div className="flex items-center gap-2 justify-between sm:justify-start">
             <div className="flex items-center gap-1.5">
               <button
-                onClick={() => setShowImportModal(true)}
+                onClick={() => document.getElementById('direct-json-file-input')?.click()}
                 className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all cursor-pointer text-xs flex items-center gap-1.5 font-semibold border border-slate-200"
                 title="Importar de arquivo JSON"
                 id="import-json-btn"
@@ -383,6 +321,13 @@ export default function App() {
                 <Upload className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Importar</span>
               </button>
+              <input
+                type="file"
+                id="direct-json-file-input"
+                accept=".json"
+                onChange={handleFileInputChange}
+                className="hidden"
+              />
               <button
                 onClick={handleExportJSON}
                 className="p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all cursor-pointer text-xs flex items-center gap-1.5 font-semibold border border-slate-200"
@@ -415,6 +360,7 @@ export default function App() {
         <AnimatePresence mode="popLayout">
           {filteredButtons.length > 0 ? (
             <motion.div 
+              key="buttons-grid"
               layout
               className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
             >
@@ -431,6 +377,7 @@ export default function App() {
             </motion.div>
           ) : (
             <motion.div
+              key="empty-state"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
@@ -443,17 +390,16 @@ export default function App() {
                 Nenhum botão encontrado
               </h3>
               <p className="text-xs text-slate-500 mt-1.5 max-w-xs mx-auto leading-relaxed">
-                {searchTerm || selectedColorFilter !== 'all' 
-                  ? 'Tente alterar os seus filtros de pesquisa ou cores acima.' 
+                {searchTerm 
+                  ? 'Tente alterar os seus filtros de pesquisa acima.' 
                   : 'Comece adicionando seu primeiro botão clicável de cópia rápida agora mesmo!'}
               </p>
               
               <div className="mt-5 flex gap-3 justify-center">
-                {searchTerm || selectedColorFilter !== 'all' ? (
+                {searchTerm ? (
                   <button
                     onClick={() => {
                       setSearchTerm('');
-                      setSelectedColorFilter('all');
                     }}
                     className="px-3.5 py-2 bg-slate-150 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
                     id="clear-filters-btn"
@@ -461,23 +407,14 @@ export default function App() {
                     Limpar Filtros
                   </button>
                 ) : (
-                  <>
-                    <button
-                      onClick={handleCreateNew}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-100 transition-all cursor-pointer flex items-center gap-1.5"
-                      id="empty-add-btn"
-                    >
-                      <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                      Adicionar Botão
-                    </button>
-                    <button
-                      onClick={handleResetToTemplates}
-                      className="px-4 py-2 bg-slate-150 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
-                      id="empty-load-templates-btn"
-                    >
-                      Carregar Exemplos
-                    </button>
-                  </>
+                  <button
+                    onClick={handleCreateNew}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-100 transition-all cursor-pointer flex items-center gap-1.5"
+                    id="empty-add-btn"
+                  >
+                    <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                    Adicionar Botão
+                  </button>
                 )}
               </div>
             </motion.div>
@@ -498,91 +435,6 @@ export default function App() {
           </div>
         </div>
       </footer>
-
-      {/* Import Modal */}
-      <AnimatePresence>
-        {showImportModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowImportModal(false)}
-              className="absolute inset-0 bg-slate-900/40 backdrop-blur-xs"
-            />
-
-            {/* Modal Body */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 15 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 15 }}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-5 shadow-2xl relative z-10"
-              id="import-modal-body"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 font-display flex items-center gap-2">
-                  <Upload className="w-4 h-4 text-blue-500" />
-                  Importar Botões (JSON)
-                </h3>
-                <button
-                  onClick={() => setShowImportModal(false)}
-                  className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer"
-                  id="close-import-modal"
-                >
-                  <X className="w-4.5 h-4.5" />
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <p className="text-xs text-slate-500 leading-relaxed">
-                  Cole o código JSON exportado de outro dispositivo ou backup no campo abaixo para restaurar ou adicionar os botões à sua biblioteca.
-                </p>
-
-                <div>
-                  <textarea
-                    value={importText}
-                    onChange={(e) => {
-                      setImportText(e.target.value);
-                      if (importError) setImportError('');
-                    }}
-                    placeholder='[\n  {\n    "id": "1",\n    "name": "Meu Link",\n    "text": "https://...",\n    "color": "blue"\n  }\n]'
-                    className="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all min-h-[160px] font-mono leading-relaxed"
-                    id="import-textarea"
-                  />
-                </div>
-
-                {importError && (
-                  <div className="text-xs text-rose-500 bg-rose-50 border border-rose-100 p-2.5 rounded-xl">
-                    ⚠️ {importError}
-                  </div>
-                )}
-
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleImportJSON}
-                    className="flex-1 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold transition-colors cursor-pointer"
-                    id="confirm-import-btn"
-                  >
-                    Confirmar Importação
-                  </button>
-                  <button
-                    onClick={() => {
-                      setShowImportModal(false);
-                      setImportText('');
-                      setImportError('');
-                    }}
-                    className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
-                    id="cancel-import-btn"
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
     </div>
   );
