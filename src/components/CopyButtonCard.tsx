@@ -13,58 +13,58 @@ interface CopyButtonCardProps {
 
 const COLOR_SCHEMES = {
   emerald: {
-    bg: 'bg-emerald-50/70 hover:bg-emerald-50/90 dark:bg-emerald-950/20 dark:hover:bg-emerald-950/30',
-    border: 'border-emerald-200 hover:border-emerald-300 dark:border-emerald-800/50 dark:hover:border-emerald-700/80',
-    text: 'text-emerald-800 dark:text-emerald-300',
-    badge: 'bg-emerald-100 text-emerald-800 border-emerald-200 dark:bg-emerald-900/40 dark:text-emerald-300 dark:border-emerald-800',
-    accent: 'emerald',
-    ring: 'focus:ring-emerald-500',
-    glow: 'hover:shadow-emerald-100/50 dark:hover:shadow-emerald-950/20',
-  },
-  blue: {
-    bg: 'bg-blue-50/70 hover:bg-blue-50/90 dark:bg-blue-950/20 dark:hover:bg-blue-950/30',
-    border: 'border-blue-200 hover:border-blue-300 dark:border-blue-800/50 dark:hover:border-blue-700/80',
-    text: 'text-blue-800 dark:text-blue-300',
-    badge: 'bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:border-blue-800',
-    accent: 'blue',
-    ring: 'focus:ring-blue-500',
-    glow: 'hover:shadow-blue-100/50 dark:hover:shadow-blue-950/20',
-  },
-  purple: {
-    bg: 'bg-purple-50/70 hover:bg-purple-50/90 dark:bg-purple-950/20 dark:hover:bg-purple-950/30',
-    border: 'border-purple-200 hover:border-purple-300 dark:border-purple-800/50 dark:hover:border-purple-700/80',
-    text: 'text-purple-800 dark:text-purple-300',
-    badge: 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-800',
-    accent: 'purple',
-    ring: 'focus:ring-purple-500',
-    glow: 'hover:shadow-purple-100/50 dark:hover:shadow-purple-950/20',
-  },
-  amber: {
-    bg: 'bg-amber-50/70 hover:bg-amber-50/90 dark:bg-amber-950/20 dark:hover:bg-amber-950/30',
-    border: 'border-amber-200 hover:border-amber-300 dark:border-amber-800/50 dark:hover:border-amber-700/80',
-    text: 'text-amber-800 dark:text-amber-300',
-    badge: 'bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:border-amber-800',
-    accent: 'amber',
-    ring: 'focus:ring-amber-500',
-    glow: 'hover:shadow-amber-100/50 dark:hover:shadow-amber-950/20',
-  },
-  rose: {
-    bg: 'bg-rose-50/70 hover:bg-rose-50/90 dark:bg-rose-950/20 dark:hover:bg-rose-950/30',
-    border: 'border-rose-200 hover:border-rose-300 dark:border-rose-800/50 dark:hover:border-rose-700/80',
-    text: 'text-rose-800 dark:text-rose-300',
-    badge: 'bg-rose-100 text-rose-800 border-rose-200 dark:bg-rose-900/40 dark:text-rose-300 dark:border-rose-800',
-    accent: 'rose',
-    ring: 'focus:ring-rose-500',
-    glow: 'hover:shadow-rose-100/50 dark:hover:shadow-rose-950/20',
-  },
-  slate: {
-    bg: 'bg-slate-50/70 hover:bg-slate-50/90 dark:bg-slate-900/30 dark:hover:bg-slate-900/40',
+    bg: 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850',
     border: 'border-slate-200 hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700',
-    text: 'text-slate-800 dark:text-slate-300',
+    text: 'text-slate-900 dark:text-slate-100',
     badge: 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
     accent: 'slate',
     ring: 'focus:ring-slate-500',
-    glow: 'hover:shadow-slate-100/50 dark:hover:shadow-slate-950/20',
+    glow: 'hover:shadow-md hover:shadow-slate-100/30 dark:hover:shadow-slate-950/10',
+  },
+  blue: {
+    bg: 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850',
+    border: 'border-slate-200 hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700',
+    text: 'text-slate-900 dark:text-slate-100',
+    badge: 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+    accent: 'slate',
+    ring: 'focus:ring-slate-500',
+    glow: 'hover:shadow-md hover:shadow-slate-100/30 dark:hover:shadow-slate-950/10',
+  },
+  purple: {
+    bg: 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850',
+    border: 'border-slate-200 hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700',
+    text: 'text-slate-900 dark:text-slate-100',
+    badge: 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+    accent: 'slate',
+    ring: 'focus:ring-slate-500',
+    glow: 'hover:shadow-md hover:shadow-slate-100/30 dark:hover:shadow-slate-950/10',
+  },
+  amber: {
+    bg: 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850',
+    border: 'border-slate-200 hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700',
+    text: 'text-slate-900 dark:text-slate-100',
+    badge: 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+    accent: 'slate',
+    ring: 'focus:ring-slate-500',
+    glow: 'hover:shadow-md hover:shadow-slate-100/30 dark:hover:shadow-slate-950/10',
+  },
+  rose: {
+    bg: 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850',
+    border: 'border-slate-200 hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700',
+    text: 'text-slate-900 dark:text-slate-100',
+    badge: 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+    accent: 'slate',
+    ring: 'focus:ring-slate-500',
+    glow: 'hover:shadow-md hover:shadow-slate-100/30 dark:hover:shadow-slate-950/10',
+  },
+  slate: {
+    bg: 'bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-850',
+    border: 'border-slate-200 hover:border-slate-300 dark:border-slate-800 dark:hover:border-slate-700',
+    text: 'text-slate-900 dark:text-slate-100',
+    badge: 'bg-slate-100 text-slate-800 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700',
+    accent: 'slate',
+    ring: 'focus:ring-slate-500',
+    glow: 'hover:shadow-md hover:shadow-slate-100/30 dark:hover:shadow-slate-950/10',
   },
 };
 
@@ -206,37 +206,7 @@ const CopyButtonCard: React.FC<CopyButtonCardProps> = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">
-                  Cor do Botão
-                </label>
-                <div className="flex flex-wrap gap-2.5">
-                  {Object.entries(COLOR_SCHEMES).map(([key, value]) => {
-                    let dotBg = '';
-                    if (key === 'emerald') dotBg = 'bg-emerald-500';
-                    else if (key === 'blue') dotBg = 'bg-blue-500';
-                    else if (key === 'purple') dotBg = 'bg-purple-500';
-                    else if (key === 'amber') dotBg = 'bg-amber-500';
-                    else if (key === 'rose') dotBg = 'bg-rose-500';
-                    else dotBg = 'bg-slate-500';
-
-                    const isSelected = color === key;
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => setColor(key as any)}
-                        className={`w-6 h-6 rounded-full ${dotBg} transition-all cursor-pointer relative flex items-center justify-center ${
-                          isSelected ? 'ring-2 ring-offset-2 ring-blue-500 dark:ring-offset-slate-900 scale-110' : 'opacity-70 hover:opacity-100 hover:scale-105'
-                        }`}
-                        title={key}
-                      >
-                        {isSelected && <Check className="w-3.5 h-3.5 text-white" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+              {/* No color picker as per user request (fundo branco, fonte preta) */}
 
               {error && (
                 <div className="text-xs text-rose-500 bg-rose-50 dark:bg-rose-950/20 border border-rose-100 dark:border-rose-900/30 p-2.5 rounded-xl flex items-start gap-1.5">
